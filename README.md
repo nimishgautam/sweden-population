@@ -2,9 +2,9 @@
 This is a visualization of the Swedish population throughout time, built with [d3js](https://d3js.org) (mostly).
 
 ## Live demo
-For a live demo, click here.
+For a live demo, click [here](https://blog.nimishg.com/public/sweden-population/svpop.html).
 
-(To just see the underlying data as a line graph, click here).
+(To just see the underlying data as a line graph, click [here](https://blog.nimishg.com/public/sweden-population/svpop_chart.html)).
 
 ## About
 The main visualization is in svpop.html, and steps through year by year.
@@ -33,4 +33,4 @@ Additionally, there's a list of parameters that can be adjusted underneath the S
 
 
 #### Sources / References
-Please see the References.md file for full reference list
+Please see the [References file](References.md) for full reference list
