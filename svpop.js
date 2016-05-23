@@ -34,6 +34,7 @@
     .attr("xlink:href", "#yggdrasil" )
     .attr("transform", "translate(" + (2 * width / 3) + "," + margin.top * 8 + ") scale(.33)");
 
+  //sweden = null, world = null, population_years = null;
   var sweden, world, population_years;
 
   d3.json('./data/sverige.topojson', function(data){
@@ -155,15 +156,21 @@
   calculate_step = function(row){
       var pixels = row.population / pop_ratio;
       //if box
-      var width = Math.sqrt( pixels * map_ratio);
-      var height = pixels / width;
-      var scaling_ratio = width/bbox.width;
+      var c_width = Math.sqrt( pixels * map_ratio);
+      var c_height = pixels / c_width;
+      var scaling_ratio = c_width/bbox.width;
+
       var retval = {
         'scaling_ratio': scaling_ratio,
-        //'x_transf': bbox.width/2.0 * (1.0 - scaling_ratio) + (bbox.x * scaling_ratio ),
-        //'x_transf': (bbox.width * .75 / scaling_ratio) - ((bbox.width/2.0) * scaling_ratio),
-        'x_transf': (bbox.width * .75 / scaling_ratio) - ((bbox.width/1.75) * scaling_ratio),
-        'y_transf': bbox.height/2.0 *(1.0 - scaling_ratio) + (bbox.y * scaling_ratio ),
+        /**************************
+        Note: scaling scales the coordinate system of the original, not just pixels
+        and bounding box gets the bbox in the coordinate system of the parent.
+        In this case, the SVG has a bbox with a translation in it inside the parent
+        meaning that translation gets scaled as well.  This equation is to re-center it
+        accounting for that initial translation in the NEW coordinate system.
+        ***************************/
+        'x_transf': width/2.0   - (scaling_ratio * (bbox.width/2.0)) - (scaling_ratio * bbox.x),
+        'y_transf': height/2.0 - (scaling_ratio * (bbox.height/2.0)) - (scaling_ratio * bbox.y)
       };
       var vals = ["immigrants", "emigrants", "births", "deaths"];
       for (var i in vals){
@@ -185,6 +192,7 @@
   var init_yrs = calculate_step(population_years[0]);
   sweden.transition().duration(500).ease("linear").attr("transform",
     "translate("+ init_yrs.x_transf + ","+ init_yrs.y_transf +") scale(" + init_yrs.scaling_ratio + ")");
+
   disp_year.text(curr_year);
   disp_subtext.text(population_years[curr_year-year_offset].population.toLocaleString());
   d3.select("#svg_container").on("click", do_step);
@@ -355,6 +363,7 @@ function animateArc() {
 
         sweden.transition().duration(500).ease("linear").attr("transform",
           "translate("+ curr_step.x_transf + ","+ curr_step.y_transf +") scale(" + curr_step.scaling_ratio + ")");
+
 
      });
   }
